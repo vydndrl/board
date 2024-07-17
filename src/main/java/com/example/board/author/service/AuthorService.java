@@ -1,6 +1,7 @@
 package com.example.board.author.service;
 
 import com.example.board.author.domain.Author;
+import com.example.board.author.dto.AuthorReqDto;
 import com.example.board.author.dto.AuthorResDetDto;
 import com.example.board.author.dto.AuthorResDto;
 import com.example.board.author.repository.MyAuthorRepository;
@@ -31,6 +32,15 @@ public class AuthorService {
             authorResDtos.add(author.listFromEntity());
         }
         return authorResDtos;
+    }
+
+    @Transactional
+    public void authorCreate(AuthorReqDto dto) {
+        if (dto.getPassword().length() < 8) {
+            throw new IllegalArgumentException("비밀번호가 너무 짧습니다");
+        }
+        Author author = dto.toEntity();
+        myAuthorRepository.save(author);
     }
 
     public AuthorResDetDto authorDetail(Long id) {
