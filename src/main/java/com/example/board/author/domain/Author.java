@@ -26,6 +26,7 @@ public class Author {
 
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private roleType role;
 
     @CreationTimestamp
