@@ -19,15 +19,14 @@
             <th>id</th>
             <th>name</th>
             <th>email</th>
-            <th>password</th>
           </tr>
         </thead>
         <tbody id="bodyData">
-          <tr th:each = "author : authorList">
+          <tr th:each = "author : ${authorList}">
             <td th:text="${author.id}"></td>
             <td th:text="${author.name}"></td>
             <td th:text="${author.email}"></td>
-            <td><a href="@{/author/detail/{id}(id = ${author.id})}">상세보기</a></td>
+            <td><a th:href="@{/author/detail/{id}(id = ${author.id})}">상세보기</a></td>
           </tr>
         </tbody>
       </table>

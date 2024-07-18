@@ -8,11 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -37,13 +34,13 @@ public class Author extends BaseTimeEntity {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private roleType role;
+    private Role role;
 
     @OneToMany(mappedBy = "author")
     private List<Post> posts;
 
     @Builder
-    public Author(String name, String email, String password, roleType role) {
+    public Author(String name, String email, String password, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -61,7 +58,7 @@ public class Author extends BaseTimeEntity {
 
     public AuthorResDetDto detFromEntity() {
         return new AuthorResDetDto
-                (this.id, this.name, this.email, this.password, this.role, this.getCreatedTime());
+                (this.id, this.name, this.email, this.password, this.role, (this.getPosts().size()), this.getCreatedTime());
     }
 }
 

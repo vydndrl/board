@@ -1,5 +1,5 @@
 package com.beyond.board.author.domain;
 
-public enum roleType {
+public enum Role {
     ADMIN, USER
 }

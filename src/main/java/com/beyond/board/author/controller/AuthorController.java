@@ -3,12 +3,10 @@ package com.beyond.board.author.controller;
 import com.beyond.board.author.dto.*;
 import com.beyond.board.author.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Controller
@@ -22,18 +20,27 @@ public class AuthorController {
     }
 
     @GetMapping("/author/list")
-    public List<AuthorResDto> authorList() {
-        return authorService.authorList();
+    public String authorList(Model model) {
+        List<AuthorResDto> authorList = authorService.authorList();
+        model.addAttribute("authorList",authorList);
+        return "author/author_list";
     }
 
-    @PostMapping("/author/create")
-    public String memberCreatePost(@RequestBody AuthorSaveReqDto dto){
+    @GetMapping("/author/register")
+    public String authorCreateScreen() {
+        return "/author/author_register";
+    }
+
+    @PostMapping("/author/register")
+    public String authorCreatePost(@ModelAttribute AuthorSaveReqDto dto){
             authorService.authorCreate(dto);
-            return "ok";
+            return "redirect:/";
     }
 
     @GetMapping("/author/detail/{id}")
-    public AuthorResDetDto authorDetail (@PathVariable Long id) {
-        return authorService.authorDetail(id);
+    public String authorDetail (@PathVariable Long id, Model model) {
+        AuthorResDetDto author = authorService.authorDetail(id);
+        model.addAttribute("author",author);
+        return "author/author_detail";
     }
 }
