@@ -2,8 +2,10 @@ package com.beyond.board.post.domain;
 
 import com.beyond.board.author.domain.Author;
 import com.beyond.board.common.BaseTimeEntity;
+import com.beyond.board.post.dto.AuthorUpdateDto;
 import com.beyond.board.post.dto.PostResDetDto;
 import com.beyond.board.post.dto.PostResDto;
+import com.beyond.board.post.dto.PostUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +32,8 @@ public class Post extends BaseTimeEntity {
     @Column(length = 3000)
     private String contents;
 
-    @ManyToOne
+    // 연관과계의 주인은 fk가 있는 post
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private Author author;
 
@@ -60,5 +63,10 @@ public class Post extends BaseTimeEntity {
                 .createdTime(this.getCreatedTime())
                 .updatedTime(this.getUpdateTime())
                 .build();
+    }
+
+    public void updatePost(PostUpdateDto dto) {
+        this.title = dto.getTitle();
+        this.contents = dto.getContents();
     }
 }

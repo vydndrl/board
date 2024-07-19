@@ -3,9 +3,7 @@ package com.beyond.board.post.service;
 import com.beyond.board.author.domain.Author;
 import com.beyond.board.author.service.AuthorService;
 import com.beyond.board.post.domain.Post;
-import com.beyond.board.post.dto.PostReqDto;
-import com.beyond.board.post.dto.PostResDetDto;
-import com.beyond.board.post.dto.PostResDto;
+import com.beyond.board.post.dto.*;
 import com.beyond.board.post.repository.MyPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,7 @@ public class PostService {
     }
 
     public List<PostResDto> postList() {
-        List<Post> posts = myPostRepository.findAll();
+        List<Post> posts = myPostRepository.findAllLeftJoin();
         List<PostResDto> postResDtos = new ArrayList<>();
         for (Post p : posts) {
             postResDtos.add(p.listFromEntity());
@@ -54,5 +52,18 @@ public class PostService {
         Post post = myPostRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시물이 없습니다."));
         return post.detFromEntity();
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        myPostRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void update(Long id, PostUpdateDto dto) {
+        Post post = myPostRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("post is not found"));
+        post.updatePost(dto);
+        myPostRepository.save(post);
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,42 +10,29 @@
     />
   </head>
   <body>
-    <object style="width: 100%" data="../common/header.html" type="text/html"></object>
-    <!-- container : 부스트랩의 컨테이너 클래스는 페이지의 내용을 
-     중앙에 정렬하고 양쪽에 패딩을 추가하고 내용을 감싸는 역할 -->
+  <div th:replace="/common/header :: headerFragment"></div>
     <div class="container">
       <div class="page-header"><h3>게시글 목록</h3></div>
-      <!-- btn-primary, btn-secondary 등 여러 버튼 제공 -->
       <div class="float-end">
-        <button class="btn btn-primary">글쓰기</button>
+        <a href="/post/create" class="btn-primary">글쓰기</a>
       </div>
       <table class="table">
         <thead>
           <tr>
             <th>id</th>
             <th>title</th>
-            <th>contents</th>
+            <th>작성자email</th>
           </tr>
         </thead>
-        <tbody id="bodyData"></tbody>
+        <tbody id="bodyData">
+        <tr th:each = "post : ${postList}">
+          <td th:text="${post.id}"></td>
+          <td th:text="${post.title}"></td>
+          <td th:text="${post.author_email}"></td>
+          <td><a th:href="@{/post/detail/{id}(id = ${post.id})}">상세보기</a></td>
+        </tr>
+        </tbody>
       </table>
     </div>
-
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-      async function serverData() {
-        const response1 = await axios.get("http://localhost:8081/post/list");
-        const allData = response1.data;
-        let bodyData = document.getElementById("bodyData");
-        for (let i = 0; i <= allData.length; i++) {
-          const id = allData[i].id;
-          const title = allData[i].title;
-          const contents = allData[i].contents;
-
-          bodyData.innerHTML += `<tr><td>${id}</td><td>${title}</td><td>${contents}</td><tr>`;
-        }
-      }
-      serverData();
-    </script>
   </body>
 </html>

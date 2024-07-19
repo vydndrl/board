@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +23,7 @@ public class AuthorSaveReqDto {
                 .password(this.password)
                 .name(this.name)
                 .email(this.email)
+                .posts(new ArrayList<>())
                 .role(this.role).build();
         return author;
     }

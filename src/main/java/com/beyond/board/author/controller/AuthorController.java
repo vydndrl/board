@@ -2,6 +2,7 @@ package com.beyond.board.author.controller;
 
 import com.beyond.board.author.dto.*;
 import com.beyond.board.author.service.AuthorService;
+import com.beyond.board.post.dto.AuthorUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,5 +43,19 @@ public class AuthorController {
         AuthorResDetDto author = authorService.authorDetail(id);
         model.addAttribute("author",author);
         return "author/author_detail";
+    }
+
+    @GetMapping("author/delete/{id}")
+    public String authorDelete (@PathVariable Long id, Model model) {
+        authorService.delete(id);
+        return "redirect:/author/list";
+    }
+
+    @PostMapping("author/update/{id}")
+    public String authorUpdate(@PathVariable Long id,
+                               @ModelAttribute AuthorUpdateDto dto,
+                               Model model) {
+        authorService.update(id, dto);
+        return "redirect:/author/detail/" + id;
     }
 }
