@@ -1,17 +1,15 @@
 package com.beyond.board.post.controller;
 
-import com.beyond.board.author.dto.*;
 import com.beyond.board.post.dto.*;
 import com.beyond.board.post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
 
 @Controller
 public class PostController {
@@ -24,9 +22,17 @@ public class PostController {
     }
 
     @GetMapping("/post/list")
-    public String postList(Model model) {
-        model.addAttribute("postList", postService.postList());
+    public String postList(Model model, @PageableDefault(size = 10, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        model.addAttribute("postList", postService.postList(pageable));
         return "post/post_list";
+    }
+
+    @GetMapping("post/list/page")
+    @ResponseBody
+//    Pageable 요청 방법 : localhost:8080/post/list/page?size=10&page=0
+    public Page<PostListResDto> postListPage(
+            @PageableDefault(size = 10, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+       return postService.postListPage(pageable);
     }
 
     @GetMapping("post/create")
@@ -36,7 +42,7 @@ public class PostController {
 
 
     @PostMapping("/post/create")
-    public String postCreate(PostReqDto dto){
+    public String postCreate(PostSaveReqDto dto){
        postService.postCreate(dto);
        return "redirect:/post/list";
     }

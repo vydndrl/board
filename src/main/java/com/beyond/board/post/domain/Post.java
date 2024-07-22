@@ -2,16 +2,13 @@ package com.beyond.board.post.domain;
 
 import com.beyond.board.author.domain.Author;
 import com.beyond.board.common.BaseTimeEntity;
-import com.beyond.board.post.dto.AuthorUpdateDto;
-import com.beyond.board.post.dto.PostResDetDto;
-import com.beyond.board.post.dto.PostResDto;
+import com.beyond.board.post.dto.PostDetResDto;
+import com.beyond.board.post.dto.PostListResDto;
 import com.beyond.board.post.dto.PostUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,20 +29,17 @@ public class Post extends BaseTimeEntity {
     @Column(length = 3000)
     private String contents;
 
+    private String appointment;
+    private LocalDateTime appointmentTime;
+
     // 연관과계의 주인은 fk가 있는 post
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @Builder
-    public Post(Long id ,String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-    }
 
-    public PostResDto listFromEntity() {
-        PostResDto postResDto = PostResDto.builder()
+    public PostListResDto listFromEntity() {
+        PostListResDto postResDto = PostListResDto.builder()
                 .id(this.id)
                 .title(this.title)
 //                .author(this.author)
@@ -54,8 +48,8 @@ public class Post extends BaseTimeEntity {
         return postResDto;
     }
 
-    public PostResDetDto detFromEntity() {
-        return PostResDetDto.builder()
+    public PostDetResDto detFromEntity() {
+        return PostDetResDto.builder()
                 .id(this.id)
                 .title(this.title)
                 .contents(this.contents)

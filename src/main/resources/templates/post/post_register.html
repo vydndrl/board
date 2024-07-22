@@ -34,6 +34,13 @@
           <label for="email">email</label>
           <input type="text" class="form-control" name="email" id="email" />
         </div>
+        <div>
+          <label>예약여부</label>
+          <input type="radio" name="appointment" value="Y">YES
+          <input type="radio" name="appointment" value="N" checked>NO
+          <label>예약시간</label>
+          <input type="datetime-local" name="appointmentTime">
+        </div>
         <button type="submit" id="myButton" class="btn btn-secondary float-end">제출</button>
       </form>
     </div>

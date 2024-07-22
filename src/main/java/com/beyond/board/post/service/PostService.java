@@ -6,13 +6,14 @@ import com.beyond.board.post.domain.Post;
 import com.beyond.board.post.dto.*;
 import com.beyond.board.post.repository.MyPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @Transactional
@@ -30,25 +31,45 @@ public class PostService {
         this.authorService = authorService;
     }
 
-    public List<PostResDto> postList() {
-        List<Post> posts = myPostRepository.findAllLeftJoin();
-        List<PostResDto> postResDtos = new ArrayList<>();
-        for (Post p : posts) {
-            postResDtos.add(p.listFromEntity());
-        }
-        return postResDtos;
+    public Page<PostListResDto> postList(Pageable pageable) {
+//        List<Post> posts = myPostRepository.findAllLeftJoin();
+//        List<PostResDto> postResDtos = new ArrayList<>();
+//        for (Post p : posts) {
+//            postResDtos.add(p.listFromEntity());
+//        }
+//        Page<Post> posts = myPostRepository.findAll(pageable)
+        Page<Post> posts = myPostRepository.findByAppointment(pageable, "N");
+        Page<PostListResDto> postListResDtos = posts.map(a->a.listFromEntity());
+        return postListResDtos;
+    }
+
+    public Page<PostListResDto> postListPage(Pageable pageable) {
+        Page<Post> posts = myPostRepository.findAll(pageable);
+        Page<PostListResDto> postListResDtos = posts.map(a->a.listFromEntity());
+        return postListResDtos;
     }
 
 //    authorservice에서 author객체를 찾아 post의 toEntity에 넘기고,
 //    jpa가 author 객체에서 author_id를 찾아 db에는 author_id가 넘어감
     @Transactional
-    public Post postCreate(PostReqDto dto) {
+    public Post postCreate(PostSaveReqDto dto) {
         Author author = authorService.authorFindByEmail(dto.getEmail());
-        Post post = myPostRepository.save(dto.toEntity(author));
+        String appointment = null;
+        LocalDateTime appointmentTime = null;
+        if (dto.getAppointment().equals("Y") && !dto.getAppointmentTime().isEmpty()) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            appointmentTime = LocalDateTime.parse(dto.getAppointmentTime(), dateTimeFormatter);
+            LocalDateTime now = LocalDateTime.now();
+            if (appointmentTime.isBefore(now)) {
+                throw new IllegalArgumentException("시간 입력이 잘못 되었습니다.");
+            }
+        }
+        System.out.println("dto = " + dto);
+        Post post = myPostRepository.save(dto.toEntity(author, appointmentTime));
         return post;
     }
 
-    public PostResDetDto postDetail(Long id) {
+    public PostDetResDto postDetail(Long id) {
         Post post = myPostRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시물이 없습니다."));
         return post.detFromEntity();
