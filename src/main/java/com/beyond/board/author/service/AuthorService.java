@@ -8,6 +8,7 @@ import com.beyond.board.author.repository.MyAuthorRepository;
 import com.beyond.board.post.domain.Post;
 import com.beyond.board.post.dto.AuthorUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,12 @@ import java.util.Optional;
 public class AuthorService {
 
     private final MyAuthorRepository myAuthorRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthorService(MyAuthorRepository authorRepository) {
+    public AuthorService(MyAuthorRepository authorRepository, PasswordEncoder passwordEncoder) {
         this.myAuthorRepository = authorRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<AuthorResDto> authorList() {
@@ -43,7 +46,7 @@ public class AuthorService {
         if (myAuthorRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 email 입니다.");
         }
-        Author author = dto.toEntity();
+        Author author = dto.toEntity(passwordEncoder.encode(dto.getPassword()));
 //        cascade persist 테스트, remove 테스트는 회원 삭제로 대체
         author.getPosts().add(Post.builder()
                 .title("가입인사")

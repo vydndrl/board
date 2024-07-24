@@ -34,6 +34,11 @@ public class AuthorController {
         return "/author/author_register";
     }
 
+    @GetMapping("/author/login-screen")
+    public String authorLoginScreen() {
+        return "/author/login-screen";
+    }
+
     @PostMapping("/author/register")
     public String authorCreatePost(@ModelAttribute AuthorSaveReqDto dto){
             authorService.authorCreate(dto);
